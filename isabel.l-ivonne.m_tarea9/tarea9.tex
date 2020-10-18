@@ -109,12 +109,13 @@ En la figura 1 el abuelo del nuevo nodo a insertar es la raíz, como su papa es 
  \end{figure}
 En la figura 2 papa y tío son rojos y su abuelo negro, al entrar  un nuevo nodo rojo se incumple las propiedades del árbol RN, por lo que  cambia de color el papá, pasa a ser negro, y el abuelo pasa a ser rojo, con lo que el tío tiene que pasar a ser negro para cumplir todas las propiedades del árbol RN.   
 
+Hay que considerar que se puede dar el caso donde el papa del abuelo puede ser rojo despues del cambio al padre del nuevo nodo, lo que nos dejaria con dos nodos rojos consecutivos, esto incumple las propiedades el arbol RN, este caso se aborda en la siguiente pregunta.
 \begin{figure}
     \centering
     \includegraphics[scale=.2]{IMG-2100.jpg}
     \caption{El abuelo del nuevo nodo es la raiz de un subarbol.}
     \label{}
  \end{figure}
- Cada que se presenta este caso, la altura negra del abuelo aumenta un grado, ya que cuando calculamos la altura negra no se cuenta el nodo al que se le quiere calcular, y ahora se agrego un nodo negro ya que el papa paso de rojo a negro y el tío también, esto permite que se mantengan  equilibradas las alturas, sin embargo los nodos ascendentes del abuelo no sufren cambios por que ya consideraban ese nodo negro con el abuelo.
+ Cada que se presenta este caso, la altura negra del abuelo aumenta un grado, ya que cuando calculamos la altura negra no se cuenta el nodo al que se le quiere calcular, y ahora se agrego un nodo negro ya que el papa paso de rojo a negro y el tío también, esto permite que se mantengan  equilibradas las alturas, sin embargo, los nodos ascendentes del abuelo no sufren cambios por que ya consideraban ese nodo negro con el abuelo.
 \end{itemize}
 \end{document}  
