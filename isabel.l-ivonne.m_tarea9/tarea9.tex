@@ -21,10 +21,12 @@
 
 \begin{itemize}
  \item [\textbf{Problema 1}] [0.5 puntos]
+
 Demostrar que si $r$ es la raíz de un árbol rojo-negro de altura $h$, tenemos 
 \begin{align*}
 h_b(r)\geq \frac{h}{2}
 \end{align*}
+
 \textbf{Respuesta:}
 
 Como la altura es la longitud del camino más largo que comienza en la raíz y termina en una hoja, existe un camino $r-n_1-n_2-\cdots-n_h$ con $n_h$ una hoja, como $h_b(r)$ es el número de nodos negros de cualquier camino desde r a una hoja, en particular es igual al número de nodos negros del conjunto 
@@ -40,6 +42,44 @@ Por lo tanto
 h_b(r)\geq \frac{h}{2}
 \end{align*}
 
+ \item [\textbf{Problema 2}] [0.5 puntos]
+
+Demostrar por inducción sobre la altura de los nodos que un subarbol enraizado en un nodo v tiene
+al menos $2^{h_b(v)} - 1$ nodos internos.
+
+\textbf{Respuesta:}
+
+Si la altura del sub arbol con raiz en v es 0 entonces $v=null$, y el subarbol enraizado en v tine $2^{h_b(v)} - 1=2^0-1=0$
+Ahora si consideramos que v, con altura positiva y como padre de dos hijos tenemos que cada hijo tiene que tener una altura negra de  $h_b(v)$ si es un nodo rojo y de $h_b(v)-1$ si es un nodo negro, por lo que por hipotesis de inducción almenos cada hijo de v tendra $2^{h_b(v)-1} - 1$ nodos internos, por lo que los nodos internos del subarbol enraisado en v seran almenos $(2^{h_b(v)-1} - 1)+(2^{h_b(v)-1} - 1)+1=2^{h_b}-1$\blacksquare
+
+ \item [\textbf{Problema 3}] [0.5 puntos]
+
+Deducir de lo anterior que, si n es el número total de nodos, la altura h del arbol satisface:
+\begin{align*}
+h\leq2\log_2(n+1)
+\end{align*}
+
+\textbf{Respuesta:}
+
+Como consecuencia de las dos preguntas anteriores podemos afirmar que
+\begin{align*}
+   n&\geq2^{h_b(r)}-1
+  \\ \xrightarrow{}  n+1&\geq2^{h_b(r)}
+\end{align*}
+ por la pregunta uno se cumple la desigualdad
+\begin{align*}
+    2^{\frac{h}{2}}&<2^{h_b} 
+   \\ \xrightarrow{} n+1&\geq 2^{\frac{h}{2}}
+\end{align*}
+aplicamos logaritmo
+\begin{align*}
+\log(n+1)\geq \frac{h}{2}
+\end{align*}
+multiplicamos por 2
+\begin{align*}
+h\leq 2 \log(n+1).
+\end{align*}
+
 \item [\textbf{Problema 4}] [0.5 puntos]
 
 Definimos la inserción de un nuevo dato en un árbol rojo-negro como sigue: Insertamos el nuevo nodo
@@ -50,5 +90,31 @@ que se puede generar una violación de las reglas de árbol rojo-negro es cuando
 \textbf{Respuesta:}
 
 Al insertar el nuevo nodo $w$ en color rojo, ninguna altura negra se ve afectada, ya que son el número de nodos negros,por lo que propiedad 5 se conserva. Ahora como el nuevo nodo es una hoja no tiene hijos y si el nodo padre es negro, entonces la propiedad de no tener nodos rojos consecutivos se conserva. Si el nodo padre es rojo entonces tenemos dos nodos rojos consecutivos que es una violación a la propiedad tres.
+
+\item [\textbf{Problema 5}] [0.5 puntos]
+
+ Mostrar que, en el caso anterior de violación, si el nodo tı́o de w (es decir, el otro hijo de su abuelo)
+es también rojo, hay una correción muy simple que se puede hacer al cambiar de colores el abuelo, el
+papa y el tı́o. Cómo cambia la altura negra de los nodos del árbol con esta correción? Mostrar que la
+correción puede provocar una violación al nivel el abuelo. Cuál es la complejidad total de la correción?
+
+\textbf{Respuesta:}
+
+En la figura 1 el abuelo del nuevo nodo a insertar es la raíz, como su papa es rojo se incumple las propiedades del árbol RN por lo que se cambia a papa y tío a negro y el abuelo pasa a ser rojo, pero como la raíz del árbol siempre tiene que ser negra se cambia a negra.
+\begin{figure}
+    \centering
+    \includegraphics[scale=.15]{IMG-2099.jpg}
+    \caption{El abuelo del nuevo nodo es la raiz.}
+    \label{}
+ \end{figure}
+En la figura 2 papa y tío son rojos y su abuelo negro, al entrar  un nuevo nodo rojo se incumple las propiedades del árbol RN, por lo que  cambia de color el papá, pasa a ser negro, y el abuelo pasa a ser rojo, con lo que el tío tiene que pasar a ser negro para cumplir todas las propiedades del árbol RN.   
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=.2]{IMG-2100.jpg}
+    \caption{El abuelo del nuevo nodo es la raiz de un subarbol.}
+    \label{}
+ \end{figure}
+ Cada que se presenta este caso, la altura negra del abuelo aumenta un grado, ya que cuando calculamos la altura negra no se cuenta el nodo al que se le quiere calcular, y ahora se agrego un nodo negro ya que el papa paso de rojo a negro y el tío también, esto permite que se mantengan  equilibradas las alturas, sin embargo los nodos ascendentes del abuelo no sufren cambios por que ya consideraban ese nodo negro con el abuelo.
 \end{itemize}
 \end{document}  
