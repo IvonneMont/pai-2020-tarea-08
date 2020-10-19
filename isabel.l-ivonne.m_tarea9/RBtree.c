@@ -9,6 +9,11 @@ typedef struct nodo{
      struct nodo *izq, *der, *padre;
 
 }nodo;
+//Prototipos
+void leftR(nodo **raiz, nodo *x);
+void rightR(nodo **raiz, nodo *x);
+void put(nodo **raiz, int data, int key);
+void RBInsertFix(nodo **raiz, nodo *z);
 
 void leftR(nodo **raiz, nodo *x)
 {
@@ -73,9 +78,8 @@ void put(nodo **raiz, int data, int key)
 {   
     
 
-    nodo *y;
-    y = NULL;
-    x = *raiz;
+    nodo *y = NULL;
+    nodo *x = *raiz;
 
     while(x!=NULL)
     {
