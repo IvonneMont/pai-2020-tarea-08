@@ -21,6 +21,13 @@ nodo* RBSucesor(nodo* root);
 void delete( nodo** raiz, int key);
 void RBDeleteFixup(nodo** raiz, nodo* x);
 
+int get(nodo **raiz, int key); //devuelve el data asociado a la llave
+int contains(nodo **raiz, int key);//nos devuelve un 1 si la llave existe dentro del arbol y un 0 si no
+int isEmpty(nodo **raiz);// nos devuelve un 1 si el arbol esta vacio y 0 si no
+int size(nodo **raiz);//nos regresa 
+void imprimirPre(nodo *recorre);//imprime en preorden
+
+
 void delete( nodo** raiz, int key ){
 	nodo* z= *raiz;
 	//Busca el nodo con la llave
@@ -342,4 +349,120 @@ void RBInsertFix(nodo **raiz, nodo *z)
             }
         }
     }
+}
+int get(nodo **raiz, int key)
+{
+    nodo *x;
+    x = *raiz;
+
+    while(x!=NULL)
+    {
+        if(key<x->key)
+        {
+        //si la llave a buscar es menor que la del nodo actual 
+        //baja por la izquierda
+            x=x->izq;
+        }
+        //si la llave a buscar es mayor que la del nodo actual 
+        //baja por la derecha
+        else if(key>x->key)
+        {
+            x=x->der;
+        }    
+        else
+        {    
+            //si no se cumplio ninguna de las anterioes encontro la llave
+            return x->data;
+            printf("el dato asociado a la llave: %i, es: %i.\n",key,x->data);
+        }
+    }
+    printf("la llave: %i, no existe en el arbol.\n",key);
+    return 0;
+}
+
+int contains(nodo **raiz, int key)
+{
+    nodo *x;
+    x = *raiz;
+
+    while(x!=NULL)
+    {
+        if(key<x->key)
+        {
+        //si la llave a buscar es menor que la del nodo actual 
+        //baja por la izquierda
+            x=x->izq;
+        }
+        //si la llave a buscar es mayor que la del nodo actual 
+        //baja por la derecha
+        else if(key>x->key)
+        {
+            x=x->der;
+        }    
+        else
+        {    
+            //si no se cumplio ninguna de las anterioes encontro la llave
+            return 1;
+            printf("la llave: %i, si se encuentra dentro del arbol.\n",key);
+        }
+    }
+    printf("la llave: %i, no existe en el arbol.\n",key);
+    return 0;
+}
+
+int isEmpty(nodo **raiz)
+{
+    if(*raiz==NULL)
+      {
+        return 1;
+      }  
+    else
+     {
+        return 0;
+     }
+}
+/*void cuenta(nodo **raíz, int *num)
+{
+    nodo *x;
+    x=*raiz;
+    if ( x != NULL)
+    {
+        (*num)++;
+        cuenta(x->izq, num);
+        cuenta(x->der, num);
+    }
+}
+int size(nodo **raiz)
+{
+
+    int *num;
+    cuenta(raiz,num); 
+
+}*/
+
+void imprimirPre(nodo *recorre)
+{
+    if (recorre != NULL)
+    {
+        printf("key = %i, color %i ->",recorre->data, recorre->color);
+        imprimirPre(recorre->izq);
+        imprimirPre(recorre->der);
+    }
+}
+
+int main()
+{
+    nodo *raiz = NULL;
+    put(&raiz, 84,84);
+    put(&raiz,87,87);
+    put(&raiz,78,78);
+    put(&raiz,16,16);
+    put(&raiz,94,94);
+    put(&raiz,36,36);
+    /*put(&raiz,87,87);
+    put(&raiz,93,93);*/
+    int g=isEmpty(&raiz);
+    printf("get %i\n",g );
+    imprimirPre(raiz);
+    return 0;
 }
