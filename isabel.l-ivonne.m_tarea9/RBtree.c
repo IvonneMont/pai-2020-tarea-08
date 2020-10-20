@@ -112,7 +112,7 @@ void RBDeleteFixup(nodo** raiz, nodo* x){
 			 if(w!=NULL&&w->color==0)
 			  {
 				  x->padre->color=1;
-				  leftR(raiz,x->padre);
+				  rightR(raiz,x->padre);
 				  w =x->padre->izq;
 			  }
 			 if(w->der->color==0&&w->izq->color==0)
@@ -126,13 +126,13 @@ void RBDeleteFixup(nodo** raiz, nodo* x){
 				   {
 					   w->der->color=0;
 					   w->color=1;
-					   rightR(raiz, w);
+					   leftR(raiz, w);
 					   
 				   }
 				   w->color=x->padre->color;
 				   x->padre->color=0;
 				   w->izq->color=0;
-				   leftR(raiz,x->padre);
+				   rightR(raiz,x->padre);
 				   x = *raiz;
 			  }
 		 }
@@ -291,7 +291,7 @@ void put(nodo **raiz, int data, int key)
 void RBInsertFix(nodo **raiz, nodo *z)
 {
     nodo *y;
-    while (z->padre->color==1)
+    while (z!=*raiz&&z->padre->color==1)
     {
         //si el papa de z es hijo izquierdo
         if(z->padre==z->padre->padre->izq)
@@ -306,11 +306,15 @@ void RBInsertFix(nodo **raiz, nodo *z)
                 z=z->padre->padre;
                } 
                //si z eshijo derecho d
-            else if(z==z->padre->der)
+            else 
             {
-                //se aplica el caso 2
-                z=z->padre;
-                leftR(raiz, z);
+				if(z==z->padre->der)
+				{
+					//se aplica el caso 2
+					z=z->padre;
+					leftR(raiz, z);
+				}
+                
                 //si se convierte en caso 3
                 if(z->padre!=NULL)
                     z->padre->color=0;
@@ -325,7 +329,7 @@ void RBInsertFix(nodo **raiz, nodo *z)
         else
         {
             
-             y=z->padre->padre->izq;
+            y=((z->padre)->padre)->izq;
             if(y!=NULL && y->color==1)
                {
                 //caso 1 papa y tio son rojos
@@ -334,11 +338,14 @@ void RBInsertFix(nodo **raiz, nodo *z)
                 z->padre->padre->color=1;
                 z=z->padre->padre;
                } 
-            else if(z==z->padre->izq)
+            else 
             {
-                //caso 2
-                z=z->padre;
-                rightR(raiz, z);
+                if(z==z->padre->izq)
+                {
+                 //caso 2
+                 z=z->padre;
+                 rightR(raiz, z);
+			    }
                 if(z->padre!=NULL)
                     z->padre->color=0;
                 if (z->padre->padre!=NULL)
@@ -349,6 +356,7 @@ void RBInsertFix(nodo **raiz, nodo *z)
             }
         }
     }
+    (*raiz)->color=0;
 }
 int get(nodo **raiz, int key)
 {
@@ -444,7 +452,7 @@ void imprimirPre(nodo *recorre)
 {
     if (recorre != NULL)
     {
-        printf("key = %i, color %i ->",recorre->data, recorre->color);
+        printf("key = %i, color %i ->",recorre->key, recorre->color);
         imprimirPre(recorre->izq);
         imprimirPre(recorre->der);
     }
@@ -452,17 +460,18 @@ void imprimirPre(nodo *recorre)
 
 int main()
 {
-    nodo *raiz = NULL;
-    put(&raiz, 84,84);
-    put(&raiz,87,87);
-    put(&raiz,78,78);
-    put(&raiz,16,16);
-    put(&raiz,94,94);
-    put(&raiz,36,36);
-    /*put(&raiz,87,87);
-    put(&raiz,93,93);*/
-    int g=isEmpty(&raiz);
-    printf("get %i\n",g );
-    imprimirPre(raiz);
+    nodo* raiz =NULL;
+	 int n=20;
+	 int key;
+	 for(int i=0; i<n; i++)
+	   {
+		  key = random()%100+1;
+		  printf("key: %d\n",key);
+		  put(&raiz,3,key); 
+		  //imprimirPre(raiz);
+		  
+	   }
+	  //printf("\n%d",raiz->key);
+	  imprimirPre(raiz);
     return 0;
 }
