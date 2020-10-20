@@ -46,14 +46,17 @@ void delete( nodo** raiz, int key ){
 	if(z->izq==NULL||z->der==NULL)
 		y = z;
 	else
-	  y = RBSucesor(z);  //y es el sucesor de z, y es una hoja
-	 
+	  { 
+		  y = RBSucesor(z);  //y es el sucesor de z, y es una hoja
+		  printf("\nsucesor: %i\n",y->key);
+		}
 	nodo* x=NULL; 
 	if(y->izq!=NULL)
 		x=y->izq;
 	else
 	  x = y->der;
-	x->padre=y->padre;
+	if(x!=NULL)
+		x->padre=y->padre;
 	if(y->padre==NULL)
 	  *raiz=x;
 	else{
@@ -61,16 +64,79 @@ void delete( nodo** raiz, int key ){
 		   y->padre->izq = x;
 		 //si no y es hijo derecho
 		 else
-		  y->padre->der=x;
+		  (y->padre)->der=x;
 	   }
 		
 	if(y!=z)
 	 z->key =y->key;
 	int color = y->color;
-	free(y);
 	if(color==0)
-	 RBDeleteFixup(raiz, x);
-		
+	 {
+		 printf("\nfix\n");
+		 if(x==NULL)//se crea NIL
+		  {
+			  printf("\nx NULL\n");
+			  nodo *w=NULL;
+			  x= y->padre;
+			  printf("\nx igual al padre de y\n");
+			  if(x->der==NULL&&x->izq==NULL)//x es el único nodo
+			   {
+				   x->color=0;
+				   free(y);
+				   return;
+			   }
+			  //si no, tiene un hijo no nulo
+			  if(x->der==NULL) 
+				{
+					printf("\nx tiene hijo izquierdo\n");
+					w=x->izq;
+					printf("\nw: %i\n",w->key);
+					if(w->color==1)
+					 {
+					   printf("\nw es rojo\n");
+					   w->color=0;
+					   if(x->padre!=NULL)
+							x->padre->color=1;
+				       rightR(raiz,x);
+				       if(x->padre==NULL)
+						{
+							 *raiz = w;
+							  printf("\nw es la raiz\n");
+						 }
+				       x=w->der;
+				       //RBDeleteFixup(raiz,x);
+				     }
+				    /*if(w->izq->color==0)
+					 {
+							w->color=1;
+							x=x->padre;
+					 }
+					else
+			         {
+				        if(w->izq->color==0)
+				        {
+					     w->der->color=0;
+					     w->color=1;
+					     leftR(raiz, w);
+					     w=x->padre->der;
+					   
+				        }
+				       w->color=x->padre->color;
+				       x->padre->color=0;
+				       w->izq->color=0;
+				       rightR(raiz,x->padre);
+				       x = *raiz;
+			        }*/
+				   //RBDeleteFixup(raiz,x); 
+				}
+			  /*else{
+				    w=x->der;
+			    }*/
+			return;  
+		  }
+		 RBDeleteFixup(raiz, x);
+	 }
+	 free(y);	
     
 }
 void RBDeleteFixup(nodo** raiz, nodo* x){
@@ -79,8 +145,9 @@ void RBDeleteFixup(nodo** raiz, nodo* x){
 		if(x==x->padre->izq)//x es hijo izquierdo
 		 {
 			 w=x->padre->der; //w es el hermano de y
-			 if(w!=NULL&&w->color==0)
+			 if(w!=NULL&&w->color==1)
 			  {
+				  w->color=0;
 				  x->padre->color=1;
 				  leftR(raiz,x->padre);
 				  w =x->padre->der;
@@ -97,6 +164,7 @@ void RBDeleteFixup(nodo** raiz, nodo* x){
 					   w->izq->color=0;
 					   w->color=1;
 					   rightR(raiz, w);
+					   w=x->padre->der;
 					   
 				   }
 				   w->color=x->padre->color;
@@ -108,14 +176,15 @@ void RBDeleteFixup(nodo** raiz, nodo* x){
 		 }
 		else
 		 {
-            w=x->padre->izq; //w es el hermano de y
-			 if(w!=NULL&&w->color==0)
+             w=x->padre->izq; //w es el hermano de y
+			 if(w!=NULL&&w->color==1)
 			  {
+				  w->color=0;
 				  x->padre->color=1;
-				  rightR(raiz,x->padre);
-				  w =x->padre->izq;
+				  rightR(raiz,w);
+				  w =x->padre->der;
 			  }
-			 if(w->der->color==0&&w->izq->color==0)
+			 if(w!=NULL&&w->der->color==0&&w->izq->color==0)
 			  {
 				  w->color=1;
 				  x=x->padre;
@@ -127,6 +196,7 @@ void RBDeleteFixup(nodo** raiz, nodo* x){
 					   w->der->color=0;
 					   w->color=1;
 					   leftR(raiz, w);
+					   w=x->padre->der;
 					   
 				   }
 				   w->color=x->padre->color;
@@ -137,14 +207,15 @@ void RBDeleteFixup(nodo** raiz, nodo* x){
 			  }
 		 }
 	 }
+  x->color=0;
 	
 }
 
 nodo* RBSucesor(nodo* root)
 {
-	nodo* y = MinAtRight(root);
+	nodo* y =MaxAtLeft(root); 
 	if (y==NULL)
-	 y = MaxAtLeft(root);
+	 y = MinAtRight(root);
 	return y;
 }
 nodo* MinAtRight(nodo* root){
@@ -305,7 +376,7 @@ void RBInsertFix(nodo **raiz, nodo *z)
                 z->padre->padre->color=1;
                 z=z->padre->padre;
                } 
-               //si z eshijo derecho d
+               //si z es hijo derecho d
             else 
             {
 				if(z==z->padre->der)
@@ -461,7 +532,7 @@ void imprimirPre(nodo *recorre)
 int main()
 {
     nodo* raiz =NULL;
-	 int n=20;
+	 int n=10;
 	 int key;
 	 for(int i=0; i<n; i++)
 	   {
@@ -472,6 +543,18 @@ int main()
 		  
 	   }
 	  //printf("\n%d",raiz->key);
+	  imprimirPre(raiz);
+	  printf("\n");
+	  delete(&raiz,93);
+	  imprimirPre(raiz);
+	  printf("\n");
+	  delete(&raiz,94);
+	  imprimirPre(raiz);
+	  printf("\n");
+	  delete(&raiz,36);
+	  imprimirPre(raiz);
+	  printf("\n");
+	  delete(&raiz,87);
 	  imprimirPre(raiz);
     return 0;
 }
