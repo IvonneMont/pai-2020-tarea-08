@@ -9,6 +9,163 @@ typedef struct nodo{
      struct nodo *izq, *der, *padre;
 
 }nodo;
+//Prototipos
+void leftR(nodo **raiz, nodo *x);
+void rightR(nodo **raiz, nodo *x);
+void put(nodo **raiz, int data, int key);
+void RBInsertFix(nodo **raiz, nodo *z);
+
+nodo* MinAtRight(nodo* root);
+nodo* MaxAtLeft(nodo* root);
+nodo* RBSucesor(nodo* root);
+void delete( nodo** raiz, int key);
+void RBDeleteFixup(nodo** raiz, nodo* x);
+
+void delete( nodo** raiz, int key ){
+	nodo* z= *raiz;
+	//Busca el nodo con la llave
+	while(z!=NULL&&z->key!=key)
+	 {
+		 if(key>z->key)
+			z = z->der;
+		 else
+		  z = z->izq;
+	 }
+	//Si no encontró ningún nodo se sale de la función
+	if(z==NULL)
+		return;
+	//z es el nodo a borrar
+	nodo* y=NULL;
+	if(z->izq==NULL||z->der==NULL)
+		y = z;
+	else
+	  y = RBSucesor(z);  //y es el sucesor de z, y es una hoja
+	 
+	nodo* x=NULL; 
+	if(y->izq!=NULL)
+		x=y->izq;
+	else
+	  x = y->der;
+	x->padre=y->padre;
+	if(y->padre==NULL)
+	  *raiz=x;
+	else{
+		 if(y==y->padre->izq) //y es hijo izquiero
+		   y->padre->izq = x;
+		 //si no y es hijo derecho
+		 else
+		  y->padre->der=x;
+	   }
+		
+	if(y!=z)
+	 z->key =y->key;
+	int color = y->color;
+	free(y);
+	if(color==0)
+	 RBDeleteFixup(raiz, x);
+		
+    
+}
+void RBDeleteFixup(nodo** raiz, nodo* x){
+	nodo* w=NULL;
+	while(x!=*raiz&&x->color==0){
+		if(x==x->padre->izq)//x es hijo izquierdo
+		 {
+			 w=x->padre->der; //w es el hermano de y
+			 if(w!=NULL&&w->color==0)
+			  {
+				  x->padre->color=1;
+				  leftR(raiz,x->padre);
+				  w =x->padre->der;
+			  }
+			 if(w->izq->color==0&&w->der->color==0)
+			  {
+				  w->color=1;
+				  x=x->padre;
+			  }
+			 else
+			  {
+				  if(w->der->color==0)
+				   {
+					   w->izq->color=0;
+					   w->color=1;
+					   rightR(raiz, w);
+					   
+				   }
+				   w->color=x->padre->color;
+				   x->padre->color=0;
+				   w->der->color=0;
+				   leftR(raiz,x->padre);
+				   x = *raiz;
+			  }
+		 }
+		else
+		 {
+            w=x->padre->izq; //w es el hermano de y
+			 if(w!=NULL&&w->color==0)
+			  {
+				  x->padre->color=1;
+				  leftR(raiz,x->padre);
+				  w =x->padre->izq;
+			  }
+			 if(w->der->color==0&&w->izq->color==0)
+			  {
+				  w->color=1;
+				  x=x->padre;
+			  }
+			 else
+			  {
+				  if(w->izq->color==0)
+				   {
+					   w->der->color=0;
+					   w->color=1;
+					   rightR(raiz, w);
+					   
+				   }
+				   w->color=x->padre->color;
+				   x->padre->color=0;
+				   w->izq->color=0;
+				   leftR(raiz,x->padre);
+				   x = *raiz;
+			  }
+		 }
+	 }
+	
+}
+
+nodo* RBSucesor(nodo* root)
+{
+	nodo* y = MinAtRight(root);
+	if (y==NULL)
+	 y = MaxAtLeft(root);
+	return y;
+}
+nodo* MinAtRight(nodo* root){
+	if(root->der==NULL) return NULL;
+	if(root->der->izq==NULL) {// Minimum is at root − >right
+        return root->der;
+      }
+	nodo* x= root->der;
+	// Min node is attained by going left
+	while (x->izq->izq != NULL) {
+      x = x->izq;
+    }
+	return x->izq;
+}
+
+nodo* MaxAtLeft(nodo* root){
+	if(root->izq==NULL) return NULL;
+	if(root->izq->der==NULL) {// Max is at root − >izq
+		return root->izq;
+      }
+	nodo* x= root->izq;
+	// Max node is attained by going right
+	while (x->der->der != NULL) {
+      x = x->der;
+    }
+	return x->der;
+}
+
 
 void leftR(nodo **raiz, nodo *x)
 {
@@ -73,9 +230,8 @@ void put(nodo **raiz, int data, int key)
 {   
     
 
-    nodo *y;
-    y = NULL;
-    x = *raiz;
+    nodo *y = NULL;
+    nodo *x = *raiz;
 
     while(x!=NULL)
     {
