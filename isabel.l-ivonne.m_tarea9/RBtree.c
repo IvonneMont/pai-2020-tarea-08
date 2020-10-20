@@ -1,34 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "RBtree.h"
 
-typedef struct nodo{
-     int data;
-     int key;
-     //0 negro y 1 rojo
-     int color;
-     struct nodo *izq, *der, *padre;
-
-}nodo;
-//Prototipos
-void leftR(nodo **raiz, nodo *x);
-void rightR(nodo **raiz, nodo *x);
-void put(nodo **raiz, int data, int key);
-void RBInsertFix(nodo **raiz, nodo *z);
-
-nodo* MinAtRight(nodo* root);
-nodo* MaxAtLeft(nodo* root);
-nodo* RBSucesor(nodo* root);
-void delete( nodo** raiz, int key);
-void RBDeleteFixup(nodo** raiz, nodo* x);
-
-int get(nodo **raiz, int key); //devuelve el data asociado a la llave
-int contains(nodo **raiz, int key);//nos devuelve un 1 si la llave existe dentro del arbol y un 0 si no
-int isEmpty(nodo **raiz);// nos devuelve un 1 si el arbol esta vacio y 0 si no
-int size(nodo **raiz);//nos regresa 
-void imprimirPre(nodo *recorre);//imprime en preorden
-
-
-void delete( nodo** raiz, int key ){
+void deleteRB( nodo** raiz, int key ){
 	nodo* z= *raiz;
 	//Busca el nodo con la llave
 	while(z!=NULL&&z->key!=key)
@@ -42,13 +16,19 @@ void delete( nodo** raiz, int key ){
 	if(z==NULL)
 		return;
 	//z es el nodo a borrar
+	if(z==*raiz&&z->der==NULL&&z->izq==NULL)
+	 {
+		 free(z);
+		 *raiz=NULL;
+		 return;
+	 }
 	nodo* y=NULL;
 	if(z->izq==NULL||z->der==NULL)
 		y = z;
 	else
 	  { 
 		  y = RBSucesor(z);  //y es el sucesor de z, y es una hoja
-		  printf("\nsucesor: %i\n",y->key);
+		  //printf("\nsucesor: %i\n",y->key);
 		}
 	nodo* x=NULL; 
 	if(y->izq!=NULL)
@@ -72,28 +52,52 @@ void delete( nodo** raiz, int key ){
 	int color = y->color;
 	if(color==0)
 	 {
-		 printf("\nfix\n");
+		 //printf("\nfix\n");
 		 if(x==NULL)//se crea NIL
 		  {
-			  printf("\nx NULL\n");
+			  //printf("\nx NULL\n");
 			  nodo *w=NULL;
 			  x= y->padre;
-			  printf("\nx igual al padre de y\n");
+			  //printf("\nx igual al padre de y\n");
+			 
 			  if(x->der==NULL&&x->izq==NULL)//x es el único nodo
 			   {
 				   x->color=0;
 				   free(y);
 				   return;
 			   }
+			   if(x==*raiz)
+			   {
+				   if(x->der==NULL)
+				    {
+						if(x->izq->der==NULL&&x->izq->izq==NULL)
+						 {
+							 x->color=0;
+							 x->izq->color=1;
+							 free(y);
+							 return;
+					     }
+					}
+					if(x->izq==NULL)
+				    {
+						if(x->der->der==NULL&&x->der->izq==NULL)
+						 {
+							 x->color=0;
+							 x->der->color=1;
+							 free(y);
+							 return;
+					     }
+					}
+			   }
 			  //si no, tiene un hijo no nulo
-			  if(x->der==NULL) 
+			  if(x->der==NULL) //tiene hijo izquierdo
 				{
-					printf("\nx tiene hijo izquierdo\n");
+					//printf("\nx tiene hijo izquierdo\n");
 					w=x->izq;
-					printf("\nw: %i\n",w->key);
+					//printf("\nw: %i\n",w->key);
 					if(w->color==1)
 					 {
-					   printf("\nw es rojo\n");
+					   //printf("\nw es rojo\n");
 					   w->color=0;
 					   if(x->padre!=NULL)
 							x->padre->color=1;
@@ -101,37 +105,47 @@ void delete( nodo** raiz, int key ){
 				       if(x->padre==NULL)
 						{
 							 *raiz = w;
-							  printf("\nw es la raiz\n");
+							  //printf("\nw es la raiz\n");
 						 }
-				       x=w->der;
-				       //RBDeleteFixup(raiz,x);
+				       w=w->der;
+				       //printf("\nw %i\n",w->key);
+				       //printf("\nx %i\n",x->key);
 				     }
-				    /*if(w->izq->color==0)
-					 {
-							w->color=1;
-							x=x->padre;
-					 }
-					else
-			         {
-				        if(w->izq->color==0)
-				        {
-					     w->der->color=0;
-					     w->color=1;
-					     leftR(raiz, w);
-					     w=x->padre->der;
+				   
+					 if(w->izq->color==0)
+				     {
+					   if(w->der!=NULL)
+						w->der->color=0;
+					   w->color=1;
 					   
-				        }
-				       w->color=x->padre->color;
-				       x->padre->color=0;
-				       w->izq->color=0;
-				       rightR(raiz,x->padre);
-				       x = *raiz;
-			        }*/
-				   //RBDeleteFixup(raiz,x); 
+					   //printf("\nx %i\n",x->key);
+					   rightR(raiz, x);
+					   x=x->padre;
+					   x->color=1;
+					   x->der->color=0;
+					   x->izq->color=0;
+					   
+					   
+				    }
 				}
-			  /*else{
-				    w=x->der;
-			    }*/
+			  else{
+				  //tiene hijo derecho
+				  w=x->der;
+				  w->color=0;
+				  //printf("\nw %i\n",w->key);
+				  leftR(raiz,x);
+				  if(x->padre==NULL)
+					{
+						*raiz=w;
+					}
+				  if(x->der!=NULL)
+					x->der->color=1;
+				  if(x->izq!=NULL)
+					x->izq->color=1;
+				  
+				  //printf("\nw %i\n",w->key);
+			    }
+			free(y);
 			return;  
 		  }
 		 RBDeleteFixup(raiz, x);
@@ -529,32 +543,3 @@ void imprimirPre(nodo *recorre)
     }
 }
 
-int main()
-{
-    nodo* raiz =NULL;
-	 int n=10;
-	 int key;
-	 for(int i=0; i<n; i++)
-	   {
-		  key = random()%100+1;
-		  printf("key: %d\n",key);
-		  put(&raiz,3,key); 
-		  //imprimirPre(raiz);
-		  
-	   }
-	  //printf("\n%d",raiz->key);
-	  imprimirPre(raiz);
-	  printf("\n");
-	  delete(&raiz,93);
-	  imprimirPre(raiz);
-	  printf("\n");
-	  delete(&raiz,94);
-	  imprimirPre(raiz);
-	  printf("\n");
-	  delete(&raiz,36);
-	  imprimirPre(raiz);
-	  printf("\n");
-	  delete(&raiz,87);
-	  imprimirPre(raiz);
-    return 0;
-}
