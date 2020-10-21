@@ -514,24 +514,27 @@ int isEmpty(nodo **raiz)
         return 0;
      }
 }
-/*void cuenta(nodo **raíz, int *num)
+void contaviliza(nodo **raiz, int *num)
 {
-    nodo *x;
-    x=*raiz;
-    if ( x != NULL)
+    nodo *z;
+    z=*raiz;
+    if(z!=NULL)
     {
         (*num)++;
-        cuenta(x->izq, num);
-        cuenta(x->der, num);
+        contaviliza(&z->izq, num);
+        contaviliza(&z->der, num);
     }
+
 }
+
 int size(nodo **raiz)
 {
 
-    int *num;
-    cuenta(raiz,num); 
+    int num=1;
+    contaviliza(raiz,&num); 
+    return num;
 
-}*/
+}
 
 void imprimirPre(nodo *recorre)
 {
