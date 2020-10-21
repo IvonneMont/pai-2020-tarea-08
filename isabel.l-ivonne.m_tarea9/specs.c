@@ -4,7 +4,7 @@
 #include "RBtree.h"
 
 int test_insert_element(void){ 
-  printf("Al probar la funcion put, la funcion get y la funcion contains"); 
+  printf("Al probar la funcion put, la funcion get y la funcion contains: "); 
   // Create raiz
   
   nodo *raiz=NULL;
@@ -23,9 +23,9 @@ int test_insert_element(void){
   // add 3
   put(&raiz,3,3);
   if(get(&raiz,3) != 3 && contains(&raiz, 3)!=1){puts("ERROR"); return 0;}
-
+  
   puts("OK"); 
-  //falta free;
+  RBfree(&raíz);
   return 1;
 } 
 
@@ -38,17 +38,21 @@ int test_Remove_element(void){
   put(&raiz,1,1);
   put(&raiz,2,2);
   put(&raiz,3,3);
+
   deleteRB(&raiz,3);
   if(contains(&raiz, 3)!=0){puts("ERROR"); return 0;}
+  
   deleteRB(&raiz,2);
   if(contains(&raiz, 2)!=0){puts("ERROR"); return 0;}
+  
   deleteRB(&raiz,1);
   if(contains(&raiz, 1)!=0){puts("ERROR"); return 0;}
+  
   deleteRB(&raiz,0);
   if(contains(&raiz, 0)!=0){puts("ERROR"); return 0;}
-
+  
   puts("OK"); 
-  //falta free
+  RBfree(&raíz);
   return 1;
 }
 
